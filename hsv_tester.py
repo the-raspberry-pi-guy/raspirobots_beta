@@ -11,11 +11,14 @@ camera.resolution = (640, 480)
 camera.framerate = 32
 rawCapture = PiRGBArray(camera, size=(640, 480))
 
-# allow the camera to warmup
-time.sleep(0.1)
-
 while True:
-	hue_value = int(raw_input("Hue Value: "))
+	while True:
+		try:
+			hue_value = int(raw_input("Hue Value: "))
+		except ValueError:
+			print("That isn't an integer, try again")
+		else:
+			break
 	for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
 		image = frame.array
 
