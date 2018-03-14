@@ -4,38 +4,67 @@ from picamera import PiCamera
 import time
 import cv2
 import numpy as np
+import gpiozero
 
 # initialize the camera and grab a reference to the raw camera capture
 camera = PiCamera()
-camera.resolution = (640, 480)
+image_width = 640
+image_height = 480
+camera.resolution = (image_width, image_height)
 camera.framerate = 32
-rawCapture = PiRGBArray(camera, size=(640, 480))
+rawCapture = PiRGBArray(camera, size=(image_width, image_height))
+center_image_x = image_width / 2
+center_image_y = image_height / 2
+minimum_area = 1000
+maximum_area = 30000
 
-# allow the camera to warmup
-time.sleep(0.1)
+robot = gpiozero.Robot(left=(17,18), right=(27,22))
+speed = 0.3
 
+HUE_VAL = 28
 
+lower_color = np.array([HUE_VAL-10,100,100])
+upper_color = np.array([HUE_VAL+10, 255, 255])
 
-while True:
-	hue_value = int(raw_input("Hue Value: "))
-	for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
-		image = frame.array
+for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
+	image = frame.array
 
-		hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+	hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
-		lower_red = np.array([hue_value-10,100,100])
-		upper_red = np.array([hue_value+10, 255, 255])
+	color_mask = cv2.inRange(hsv, lower_color, upper_color)
 
-		mask = cv2.inRange(hsv, lower_red, upper_red)
+	countours, hierarchy = cv2.findContours(color_mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
-		res = cv2.bitwise_and(image, image, mask= mask)
+	object_area = 0
+	object_x = 0
+	object_y = 0
 
-		cv2.imshow("Frame", image)
-		cv2.imshow("Mask", mask)
-		cv2.imshow("Res", res)
+	for contour in countours:
+		x, y, width, height = cv2.boundingRect(contour)
+		found_area = width * height
+		center_x = x + (width / 2)
+		center_y = y + (height / 2)
+		if object_area < found_area:
+			object_area = found_area
+			object_x = center_x
+			object_y = center_y
+	if object_area > 0:
+		ball_location = [object_area, object_x, object_y]
+	else:
+		ball_location = None
 
-		rawCapture.truncate(0)
+	if ball_location:
+		if (ball_location[0] > minimum_area) and (ball_location[0] < maximum_area):
+			if ball_location[1] > (center_image_x + (image_width/5)):
+#				robot.right(speed)
+				print("Turning right")
+			elif ball_location[1] < (center_image_x - (image_width/5)):
+#				robot.left(speed)
+				print("Turning left")
+			else:
+				print("Forward")
+		else:
+#			robot.stop()
+			print("Stopping")
 
-		k = cv2.waitKey(5) #& 0xFF
-		if "q" == chr(k & 255):
-			break
+	rawCapture.truncate(0)
