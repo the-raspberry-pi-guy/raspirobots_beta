@@ -14,6 +14,8 @@ rawCapture = PiRGBArray(camera, size=(640, 480))
 # allow the camera to warmup
 time.sleep(0.1)
 
+
+
 while True:
 	hue_value = int(raw_input("Hue Value: "))
 	for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
@@ -24,13 +26,13 @@ while True:
 		lower_red = np.array([hue_value-10,100,100])
 		upper_red = np.array([hue_value+10, 255, 255])
 
-		color_mask = cv2.inRange(hsv, lower_red, upper_red)
+		mask = cv2.inRange(hsv, lower_red, upper_red)
 
-		result = cv2.bitwise_and(image, image, mask= color_mask)
+		res = cv2.bitwise_and(image, image, mask= mask)
 
-		cv2.imshow("Camera Output", image)
-		cv2.imshow("Color Mask", color_mask)
-		cv2.imshow("Final Result", result)
+		cv2.imshow("Frame", image)
+		cv2.imshow("Mask", mask)
+		cv2.imshow("Res", res)
 
 		rawCapture.truncate(0)
 
