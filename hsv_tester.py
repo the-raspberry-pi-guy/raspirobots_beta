@@ -14,11 +14,14 @@ rawCapture = PiRGBArray(camera, size=(640, 480))
 while True:
 	while True:
 		try:
-			hue_value = int(raw_input("Hue Value: "))
+			hue_value = int(raw_input("Hue value between 10 and 245: "))
+			if (hue_value < 10) or (hue_value > 245):
+				raise ValueError
 		except ValueError:
-			print("That isn't an integer, try again")
+			print("That isn't an integer between 10 and 245, try again")
 		else:
 			break
+
 	for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
 		image = frame.array
 
