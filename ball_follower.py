@@ -15,11 +15,12 @@ camera.framerate = 32
 rawCapture = PiRGBArray(camera, size=(image_width, image_height))
 center_image_x = image_width / 2
 center_image_y = image_height / 2
-minimum_area = 1000
-maximum_area = 30000
+minimum_area = 250
+maximum_area = 100000
 
 robot = gpiozero.Robot(left=(17,18), right=(27,22))
-speed = 0.3
+forward_speed = 0.3
+turn_speed = 0.25
 
 HUE_VAL = 28
 
@@ -55,16 +56,29 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
 
 	if ball_location:
 		if (ball_location[0] > minimum_area) and (ball_location[0] < maximum_area):
-			if ball_location[1] > (center_image_x + (image_width/5)):
-#				robot.right(speed)
+#			left_speed = (float(ball_location[1]) / image_width) / 1.5
+#			right_speed = (1 - left_speed) / 1.5
+#			robot.value = (left_speed, right_speed)
+#			print(ball_location[1])
+#			print(left_speed, right_speed)
+
+			if ball_location[1] > (center_image_x + (image_width/3)):
+				robot.right(turn_speed)
 				print("Turning right")
-			elif ball_location[1] < (center_image_x - (image_width/5)):
-#				robot.left(speed)
+			elif ball_location[1] < (center_image_x - (image_width/3)):
+				robot.left(turn_speed)
 				print("Turning left")
 			else:
+				robot.forward(forward_speed)
 				print("Forward")
+		elif (ball_location[0] < minimum_area):
+			robot.left(turn_speed)
+			print("Target isn't large enough, searching")
 		else:
-#			robot.stop()
-			print("Stopping")
+			robot.stop()
+			print("Target large enough, stopping")
+	else:
+		robot.left(turn_speed)
+		print("Target not found, searching")
 
 	rawCapture.truncate(0)

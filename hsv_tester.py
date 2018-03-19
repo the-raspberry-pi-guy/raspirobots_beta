@@ -22,19 +22,20 @@ while True:
 		else:
 			break
 
+	lower_red = np.array([hue_value-10,100,100])
+	upper_red = np.array([hue_value+10, 255, 255])
+
 	for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
 		image = frame.array
 
 		hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-
-		lower_red = np.array([hue_value-10,100,100])
-		upper_red = np.array([hue_value+10, 255, 255])
 
 		color_mask = cv2.inRange(hsv, lower_red, upper_red)
 
 		result = cv2.bitwise_and(image, image, mask= color_mask)
 
 		cv2.imshow("Camera Output", image)
+		cv2.imshow("HSV", hsv)
 		cv2.imshow("Color Mask", color_mask)
 		cv2.imshow("Final Result", result)
 
