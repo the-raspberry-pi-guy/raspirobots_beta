@@ -1,4 +1,3 @@
-# import the necessary packages
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 import time
@@ -6,7 +5,6 @@ import cv2
 import numpy as np
 import gpiozero
 
-# initialize the camera and grab a reference to the raw camera capture
 camera = PiCamera()
 image_width = 640
 image_height = 480
@@ -56,12 +54,6 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
 
 	if ball_location:
 		if (ball_location[0] > minimum_area) and (ball_location[0] < maximum_area):
-#			left_speed = (float(ball_location[1]) / image_width) / 1.5
-#			right_speed = (1 - left_speed) / 1.5
-#			robot.value = (left_speed, right_speed)
-#			print(ball_location[1])
-#			print(left_speed, right_speed)
-
 			if ball_location[1] > (center_image_x + (image_width/3)):
 				robot.right(turn_speed)
 				print("Turning right")
