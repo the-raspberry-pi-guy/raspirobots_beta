@@ -14,7 +14,7 @@ rawCapture = PiRGBArray(camera, size=(640, 480))
 while True:
 	while True:
 		try:
-			hue_value = int(raw_input("Hue value between 10 and 245: "))
+			hue_value = int(input("Hue value between 10 and 245: "))
 			if (hue_value < 10) or (hue_value > 245):
 				raise ValueError
 		except ValueError:
