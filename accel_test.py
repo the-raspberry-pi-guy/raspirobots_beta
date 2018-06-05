@@ -1,7 +1,7 @@
 import cwiid
 import time
 
-print("Press the 1+2 buttons on your Wiimote simultaneously")
+print("Press and hold the 1+2 buttons on your Wiimote simultaneously")
 wii = cwiid.Wiimote()
 print("Connection established")
 wii.rpt_mode = cwiid.RPT_BTN | cwiid.RPT_ACC
