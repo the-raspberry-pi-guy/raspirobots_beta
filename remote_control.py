@@ -1,6 +1,5 @@
 import gpiozero
 import cwiid
-import time
 
 robot = gpiozero.Robot(left=(17,18), right=(27,22))
 
