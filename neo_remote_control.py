@@ -1,7 +1,7 @@
 import gpiozero
 import cwiid
 import time
-from neopixel import *
+from rpi_ws281x import *
 
 robot = gpiozero.Robot(left=(17,18), right=(27,22))
 
