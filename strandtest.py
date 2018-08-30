@@ -5,8 +5,10 @@
 # Direct port of the Arduino NeoPixel library strandtest example.  Showcases
 # various animations on a strip of NeoPixels.
 
+# Minor edits by Matt Timmons-Brown for "Learn Robotics with Raspberry Pi"
+
 import time
-from neopixel import *
+from rpi_ws281x import *
 import argparse
 
 # LED strip configuration:
@@ -18,8 +20,6 @@ LED_DMA        = 10      # DMA channel to use for generating signal (try 10)
 LED_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
 LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
 LED_CHANNEL    = 0       # set to '1' for GPIOs 13, 19, 41, 45 or 53
-
-
 
 # Define functions which animate LEDs in various ways.
 def colorWipe(strip, color, wait_ms=50):
