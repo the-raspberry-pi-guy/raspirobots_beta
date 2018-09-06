@@ -5,7 +5,7 @@ led = gpiozero.LED(4)
 
 while True:
         led.on()
-        time.sleep(5)
+        time.sleep(1)
         led.off()
         time.sleep(1)
 
